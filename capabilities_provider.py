@@ -1,10 +1,10 @@
 import json
 import configparser
-import os
+import subprocess
 Config = None
 
 
-class profile:
+class Profile:
 
     def get_metadata(self):
         metadata = {}
@@ -26,8 +26,8 @@ class profile:
 
     def get_cdmi_data_redundancy(self):
         command = "ceph osd pool get "+self.pool+" size"
-        output = os.system(command)
-        return output[6:]
+        output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return int(output.stdout.readline()[6:-1])
 
 
     def get_cdmi_geographic_placement(self):
@@ -59,7 +59,7 @@ def get_profiles():
     profiles = []
     profiles_names = get_profiles_names()
     for p in profiles_names:
-        single_profile = profile(p, Config[p])
+        single_profile = Profile(p, Config[p])
         profiles.append(single_profile.__dict__)
     return profiles
 
