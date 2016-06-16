@@ -1,6 +1,6 @@
 import json
 import configparser
-import ast
+import os
 Config = None
 
 
@@ -12,7 +12,6 @@ class profile:
         cdmi_latency = self.get_cdmi_latency()
         metadata["cdmi_latency"] = str(cdmi_latency)
 
-        print(type(self.get_cdmi_geographic_placement()))
         cdmi_geographic_placement = self.get_cdmi_geographic_placement()
         metadata["cdmi_geographic_placement"] = cdmi_geographic_placement
 
@@ -26,8 +25,10 @@ class profile:
         return Config[self.name]["cdmi_latency"]
 
     def get_cdmi_data_redundancy(self):
-        global Config
-        return Config[self.name]["cdmi_data_redundancy"]
+        command = "ceph osd pool get "+self.pool+" size"
+        output = os.system(command)
+        return output[6:]
+
 
     def get_cdmi_geographic_placement(self):
         global Config
@@ -36,6 +37,7 @@ class profile:
 
     def __init__(self, name, values):
         self.name = name
+        self.pool = values["pool"]
         self.type = values["type"]
         self.allowed_profiles = []
         self.metadata = self.get_metadata()
