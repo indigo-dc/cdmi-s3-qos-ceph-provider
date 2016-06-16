@@ -1,6 +1,7 @@
 import json
 import configparser
 import subprocess
+import os
 Config = None
 
 
@@ -46,7 +47,8 @@ class Profile:
 def read_config():
     global Config
     Config = configparser.ConfigParser()
-    Config.read("profile_config.ini")
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    Config.read(dirname+"/profile_config.ini")
 
 
 def get_profiles_names():
