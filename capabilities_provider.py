@@ -67,9 +67,14 @@ def get_profiles():
 
 
 def main():
-    read_config()
-    profiles = get_profiles()
-    print(json.dumps(profiles))
+    try:
+        read_config()
+        profiles = get_profiles()
+        if len(profiles) ==0:
+            return -1
+        print(json.dumps(profiles))
+    except:
+        return -1
 
 if __name__ == "__main__":
     main()
