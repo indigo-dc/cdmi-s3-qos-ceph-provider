@@ -11,7 +11,7 @@ import json
 import configparser
 import os
 import argparse
-import ast
+import subprocess
 Config = None
 
 
@@ -36,7 +36,7 @@ class Profile:
         return Config[self.name]["cdmi_latency"]
 
     def get_cdmi_data_redundancy(self):
-        command = "ceph osd pool get "+self.pools+" size"
+        command = "ceph osd pool get "+self.pools[0]+" size"
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         return int(output.stdout.readline()[6:-1])
 
