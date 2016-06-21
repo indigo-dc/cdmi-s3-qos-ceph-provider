@@ -76,11 +76,14 @@ def get_profiles():
         profiles.append(single_profile.__dict__)
     return profiles
 
-def get_profile(profiles, name):
+def get_profile(profiles, bucket_name):
     profile = None
-
+    command = "radosgw-admin bucket stats --bucket=bucketgracka"+str(bucket_name)
+    output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    json_output = json.load(output)
+    pool_name = json_output["pool"]
     for p in profiles:
-        if name in p["pools"]:
+        if pool_name in p["pools"]:
             profile = p
 
     return profile
