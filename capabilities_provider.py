@@ -11,6 +11,7 @@ import json
 import configparser
 import subprocess
 import os
+import argparse
 Config = None
 
 
@@ -35,9 +36,10 @@ class Profile:
         return Config[self.name]["cdmi_latency"]
 
     def get_cdmi_data_redundancy(self):
-        command = "ceph osd pool get "+self.pool+" size"
-        output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        return int(output.stdout.readline()[6:-1])
+        #command = "ceph osd pool get "+self.pools+" size"
+        #output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        #return int(output.stdout.readline()[6:-1])
+        return 2
 
 
     def get_cdmi_geographic_placement(self):
@@ -47,17 +49,17 @@ class Profile:
 
     def __init__(self, name, values):
         self.name = name
-        self.pool = values["pool"]
+        self.pools = values["pools"]
         self.type = values["type"]
         self.allowed_profiles = []
         self.metadata = self.get_metadata()
-
+        
 
 def read_config():
     global Config
     Config = configparser.ConfigParser()
     dirname, filename = os.path.split(os.path.abspath(__file__))
-    Config.read(dirname+"/profile_config.ini")
+    Config.read(dirname+os.sep+"profile_config.ini")
 
 
 def get_profiles_names():
@@ -77,12 +79,23 @@ def get_profiles():
 
 def main():
     try:
-        read_config()
-        profiles = get_profiles()
-        if len(profiles) ==0:
-            return -1
-        print(json.dumps(profiles))
-    except:
+        parser = argparse.ArgumentParser(description='Returns capabilities information from CEPH server')
+        parser.add_argument('-b', '--bucket', type=str, help='Get profile of given bucket', required=False)
+        parser.add_argument('-a', '--all', help='Get all profiles',action="store_true", required=False, default=False)
+        args = parser.parse_args()
+
+        if args.all:
+            read_config()
+            profiles = get_profiles()
+            if len(profiles) ==0:
+                return -1
+            print(json.dumps(profiles))
+        elif parser.bucket:
+            pass
+        else:
+            parser.print_help()
+    except Exception as e:
+        print("OS error: {0}".format(e))
         return -1
 
 if __name__ == "__main__":
