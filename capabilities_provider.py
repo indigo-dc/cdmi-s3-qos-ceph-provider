@@ -82,7 +82,6 @@ def get_profile(profiles, bucket_name):
     output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
     json_output = json.loads(output.decode("utf-8"))
     pool_name = json_output["pool"]
-    print(pool_name)
     for p in profiles:
         if pool_name in p["pools"]:
             profile = p
