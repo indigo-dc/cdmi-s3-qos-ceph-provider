@@ -39,7 +39,6 @@ class Profile:
         command = "ceph osd pool get "+self.pools+" size"
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         return int(output.stdout.readline()[6:-1])
-        return 2
 
 
     def get_cdmi_geographic_placement(self):
