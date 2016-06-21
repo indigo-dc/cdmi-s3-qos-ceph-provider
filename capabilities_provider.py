@@ -9,9 +9,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 import json
 import configparser
-import subprocess
 import os
 import argparse
+import ast
 Config = None
 
 
@@ -36,9 +36,9 @@ class Profile:
         return Config[self.name]["cdmi_latency"]
 
     def get_cdmi_data_redundancy(self):
-        #command = "ceph osd pool get "+self.pools+" size"
-        #output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        #return int(output.stdout.readline()[6:-1])
+        command = "ceph osd pool get "+self.pools+" size"
+        output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return int(output.stdout.readline()[6:-1])
         return 2
 
 
@@ -49,7 +49,7 @@ class Profile:
 
     def __init__(self, name, values):
         self.name = name
-        self.pools = values["pools"]
+        self.pools = ast.literal_eval(Config.get(self.name, "pools"))
         self.type = values["type"]
         self.allowed_profiles = []
         self.metadata = self.get_metadata()
@@ -76,6 +76,14 @@ def get_profiles():
         profiles.append(single_profile.__dict__)
     return profiles
 
+def get_profile(profiles, name):
+    profile = None
+
+    for p in profiles:
+        if name in p["pools"]:
+            profile = p
+
+    return profile
 
 def main():
     try:
@@ -90,8 +98,13 @@ def main():
             if len(profiles) ==0:
                 return -1
             print(json.dumps(profiles))
-        elif parser.bucket:
-            pass
+        elif args.bucket:
+            read_config()
+            profiles = get_profiles()
+            profile = get_profile(profiles, args.bucket)
+            if len(profiles) ==0 and profile!=None:
+                return -1
+            print(json.dumps(profile))
         else:
             parser.print_help()
     except Exception as e:
