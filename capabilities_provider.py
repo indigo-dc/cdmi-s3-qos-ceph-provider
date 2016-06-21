@@ -78,7 +78,7 @@ def get_profiles():
 
 def get_profile(profiles, bucket_name):
     profile = None
-    command = "radosgw-admin bucket stats --bucket=bucketgracka"+str(bucket_name)
+    command = "radosgw-admin bucket stats --bucket="+str(bucket_name)
     output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     json_output = json.load(output)
     pool_name = json_output["pool"]
