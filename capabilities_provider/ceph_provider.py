@@ -22,7 +22,7 @@ class DataProvider:
         return profiles
 
     def get_profile_json(self, bucket_name):
-        profiles = self.__get_profiles_json()
+        profiles = self.__get_profiles()
         profile = None
         command = "radosgw-admin bucket stats --bucket=\""+str(bucket_name)+"\""
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
