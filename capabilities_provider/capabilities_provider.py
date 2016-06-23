@@ -27,10 +27,9 @@ def main():
         parser.add_argument('-a', '--all', help='Get all profiles',action="store_true", required=False, default=False)
         args = parser.parse_args()
 
-        global_config = read_config("config.ini")
-        provider = importlib.import_module(global_config["Global"]["provider"])
-        profiles_config = read_config("profile_config.ini")
-        backend_provider = provider.DataProvider(profiles_config)
+        config = read_config("config.ini")
+        provider = importlib.import_module(config["Global"]["provider"])
+        backend_provider = provider.DataProvider(read_config("profile_config.ini"))
 
         if args.all:
             profiles = backend_provider.get_profiles_json()
