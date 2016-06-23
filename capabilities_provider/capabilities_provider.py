@@ -12,6 +12,7 @@ import os
 import argparse
 import importlib
 import sys
+import traceback
 
 def read_config(name):
     config = configparser.ConfigParser()
@@ -45,6 +46,7 @@ def main():
             parser.print_help()
     except Exception as e:
         print("OS error: {0}".format(e))
+        traceback.print_exc(file=sys.stdout)
         sys.exit(-1)
 
 if __name__ == "__main__":
