@@ -6,6 +6,12 @@ from profile import Profile
 class DataProvider:
 
     def get_profiles_json(self):
+        profiles = self.__get_profiles()
+        if profiles is None:
+            return None
+        return json.dumps(profiles)
+
+    def __get_profiles(self):
         profiles = []
         profiles_names = self.get_profiles_names()
         for p in profiles_names:
@@ -13,10 +19,10 @@ class DataProvider:
             profiles.append(single_profile.__dict__)
         if len(profiles) == 0:
             return None
-        return json.dumps(profiles)
+        return profiles
 
     def get_profile_json(self, bucket_name):
-        profiles = self.get_profiles_json()
+        profiles = self.__get_profiles_json()
         profile = None
         command = "radosgw-admin bucket stats --bucket=\""+str(bucket_name)+"\""
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
