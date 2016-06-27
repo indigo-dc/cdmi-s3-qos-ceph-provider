@@ -29,7 +29,7 @@ class DataProvider:
         try:
             json_output = json.loads(output.decode("utf-8"))
         except ValueError:
-            return json.dumps("")
+            return json.dumps("{}")
         pool_name = json_output["pool"]
         for p in profiles:
             if pool_name in p["pools"]:
