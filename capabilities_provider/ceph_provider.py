@@ -32,7 +32,7 @@ class DataProvider:
             if pool_name in p["pools"]:
                 profile = p
         if profile is None:
-            None
+            return json.dumps("")
         return json.dumps(profile)
 
     def get_profiles_names(self):
