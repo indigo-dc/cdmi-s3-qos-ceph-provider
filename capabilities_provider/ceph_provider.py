@@ -28,11 +28,13 @@ class DataProvider:
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
         json_output = json.loads(output.decode("utf-8"))
         pool_name = json_output["pool"]
+        if pool_name is None:
+            return json.dumps("")
         for p in profiles:
             if pool_name in p["pools"]:
                 profile = p
         if profile is None:
-            return json.dumps("")
+            None
         return json.dumps(profile)
 
     def get_profiles_names(self):
