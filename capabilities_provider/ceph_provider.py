@@ -26,10 +26,11 @@ class DataProvider:
         profile = None
         command = "radosgw-admin bucket stats --bucket=\""+str(bucket_name)+"\""
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
-        json_output = json.loads(output.decode("utf-8"))
-        pool_name = json_output["pool"]
-        if pool_name is None:
+        try:
+            json_output = json.loads(output.decode("utf-8"))
+        except ValueError:
             return json.dumps("")
+        pool_name = json_output["pool"]
         for p in profiles:
             if pool_name in p["pools"]:
                 profile = p
