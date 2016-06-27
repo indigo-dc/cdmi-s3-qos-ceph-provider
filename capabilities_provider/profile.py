@@ -18,6 +18,20 @@ class Profile:
 
         return metadata
 
+    def __get_metadata_provided(self, values):
+        metadata_provided = {}
+
+        cdmi_latency = values["cdmi_latency"]
+        metadata_provided["cdmi_latency_provided"] = str(cdmi_latency)
+
+        cdmi_geographic_placement = self.__get_cdmi_geographic_placement(values)
+        metadata_provided["cdmi_geographic_placement_provided"] = cdmi_geographic_placement
+
+        cdmi_data_redundancy = self.__get_cdmi_data_redundancy(values)
+        metadata_provided["cdmi_data_redundancy_provided"] = str(cdmi_data_redundancy)
+
+        return metadata_provided
+
     def __get_cdmi_data_redundancy(self, values):
         command = "ceph osd pool get "+self.pools[0]+" size"
         output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -33,3 +47,4 @@ class Profile:
         self.type = values["type"]
         self.allowed_profiles = []
         self.metadata = self.__get_metadata(values)
+        self.metadata_provided = self.__get_metadata_provided(values)
