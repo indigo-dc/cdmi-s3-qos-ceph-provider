@@ -1,9 +1,10 @@
+import abstract_source
 import subprocess
 import json
 from profile import Profile
 
 
-class DataProvider:
+class DataProvider(abstract_source.AbstractSource):
 
     def get_profiles_json(self):
         profiles = self.__get_profiles()
