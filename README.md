@@ -129,7 +129,10 @@ Data source is configured in `config.ini` file. The available values are:
 
 Returns live data from Ceph and `profile_config.ini` file.
 
-Currently only mapping between buckets and pools uses `rados-admin` tool.
+Data read directly from Ceph:
+
+* data redundancy
+* mapping between bucket and pool
 
 Sample ``profile_config.ini`:
 ```
@@ -138,12 +141,11 @@ pools=[".rgw.buckets"]
 type: container
 cdmi_latency: 20
 cdmi_geographic_placement: PL, GB
-cdmi_data_redundancy: 2
 
 [Profile2]
 pools=[".rgw.buckets.cdmi2"]
 type: dataobject
 cdmi_latency: 300
 cdmi_geographic_placement: DE, CZ
-cdmi_data_redundancy: 1
+
 ```
