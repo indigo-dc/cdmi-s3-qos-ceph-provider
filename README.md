@@ -4,7 +4,7 @@
 
 This project provides a worker for obtaining QOS information from Ceph storage system. It is designed to act as a QOS data source for  [**cdmi-s3-qos**](https://github.com/indigo-dc/cdmi-s3-qos) module, but it can also act as a standalone module.
 This service supports two data sources:
-* Ceph data source - data is obtained from configured Ceph storage system (live mode)
+* Ceph data source - data is obtained from configured Ceph storage system (life mode)
 * Mock data source - data is obtained from configuration file (designed for testing purposes)
 
 ## Installation
@@ -38,10 +38,10 @@ optional arguments:
 
 Data source is configured in `config.ini` file. The available values are:
 
-* `ceph_source` for live mode
-* `mock_source` for testing purposes
+* `ceph_source` to take advantage of Ceph data source
+* `mock_source` to take advantage of Mock data source
 
-### mock source
+### Mock data source
 
 `cdmi-s3-qos-ceph-provider.py -b BUCKET` returns always:
 
@@ -125,9 +125,11 @@ Data source is configured in `config.ini` file. The available values are:
 ]
 ```
 
-### ceph_source
+### Ceph data source
 
-Returns live data from Ceph and `profile_config.ini` file.
+Each Ceph pool has assigned some QoS profile. Each bucket resides wihtin single pool. Mapping between QoS profiles and Ceph pools is placed in `profile_config.ini` file. Relation between buckets and pools is determined on the fly with help of Ceph administrative tools.
+
+QoS profiles are described by set of attributes (in key - value format). As not all QoS attributes can be get from Ceph tools, some of them are placed in `profile_config.ini` file. The other attributes are read dynamically from Ceph platform.
 
 Data read directly from Ceph:
 
