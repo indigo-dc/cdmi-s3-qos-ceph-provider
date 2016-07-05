@@ -29,7 +29,7 @@ def main():
         args = parser.parse_args()
 
         config = read_config("config.ini")
-        provider = importlib.import_module(config["Global"]["provider"])
+        provider = importlib.import_module(config["Global"]["data_source"])
         backend_provider = provider.DataProvider(read_config("profile_config.ini"))
 
         if args.all:
