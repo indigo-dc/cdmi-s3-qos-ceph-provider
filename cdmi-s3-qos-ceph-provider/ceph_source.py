@@ -28,23 +28,28 @@ class DataProvider(abstract_source.AbstractSource):
         pool_name = None
         if bucket_name == "/":
             command = "radosgw-admin zonegroup get"
-            output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+            output = \
+            subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
             try:
                 json_output = json.loads(output.decode("utf-8"))
             except ValueError:
                 return json.dumps({})
-            default_placement = json_output["placement_targets"]["tags"][0]
-
+            default_placement = json_output["default_placement"]
             command = "radosgw-admin zone get --rgw-zone=default"
-            output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+            output = \
+            subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
             try:
                 json_output = json.loads(output.decode("utf-8"))
             except ValueError:
                 return json.dumps({})
-            pool_name = json_output["placement_pools"][default_placement]
+            dict_list = json_output["placement_pools"]
+            for d in dict_list:
+                if d["key"] == default_placement:
+                    pool_name = d["val"]["data_pool"]
         else:
-            command = "radosgw-admin bucket stats --bucket=\""+str(bucket_name)+"\""
-            output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+            command = "radosgw-admin bucket stats --bucket=\"" + str(bucket_name) + "\""
+            output = \
+            subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
             try:
                 json_output = json.loads(output.decode("utf-8"))
             except ValueError:
