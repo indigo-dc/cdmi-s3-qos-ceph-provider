@@ -25,13 +25,31 @@ class DataProvider(abstract_source.AbstractSource):
     def get_profile_json(self, bucket_name):
         profiles = self.__get_profiles()
         profile = None
-        command = "radosgw-admin bucket stats --bucket=\""+str(bucket_name)+"\""
-        output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
-        try:
-            json_output = json.loads(output.decode("utf-8"))
-        except ValueError:
-            return json.dumps({})
-        pool_name = json_output["pool"]
+        pool_name = None
+        if bucket_name == "/":
+            command = "radosgw-admin zonegroup get"
+            output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+            try:
+                json_output = json.loads(output.decode("utf-8"))
+            except ValueError:
+                return json.dumps({})
+            default_placement = json_output["placement_targets"]["tags"][0]
+
+            command = "radosgw-admin zone get --rgw-zone=default"
+            output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+            try:
+                json_output = json.loads(output.decode("utf-8"))
+            except ValueError:
+                return json.dumps({})
+            pool_name = json_output["placement_pools"][default_placement]
+        else:
+            command = "radosgw-admin bucket stats --bucket=\""+str(bucket_name)+"\""
+            output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0]
+            try:
+                json_output = json.loads(output.decode("utf-8"))
+            except ValueError:
+                return json.dumps({})
+            pool_name = json_output["pool"]
         for p in profiles:
             if pool_name in p["pools"]:
                 profile = p
