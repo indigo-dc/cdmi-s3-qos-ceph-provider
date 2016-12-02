@@ -46,5 +46,6 @@ class Profile:
         self.pools = ast.literal_eval(values.get("pools"))
         self.type = values["type"]
         self.allowed_profiles = []
+        self.allowed_profiles.append(name)
         self.metadata = self.__get_metadata(values)
         self.metadata_provided = self.__get_metadata_provided(values)
